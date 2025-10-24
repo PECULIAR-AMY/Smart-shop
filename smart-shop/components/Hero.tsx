@@ -23,7 +23,7 @@ export default function HeroSection() {
         transition={{ duration: 1 }}
         className="max-w-2xl text-gray-600 dark:text-gray-300 mb-10 text-lg"
       >
-        Let AI guide your next purchase — from essentials to splurges — and pay flexibly with our Buy Now, Pay Later options. <br />
+        Let AI guide your next purchase from essentials to splurges and pay flexibly with our Buy Now, Pay Later options. <br />
         Smart-Buy learns your taste and spending habits to recommend what fits <span className="font-semibold text-indigo-600 dark:text-indigo-400">you</span>.
       </motion.p>
 

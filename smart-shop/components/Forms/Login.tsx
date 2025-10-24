@@ -1,14 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabaseClient";
 
 export default function LoginForm() {
+  const router = useRouter();
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -16,23 +20,34 @@ export default function LoginForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-        const userCredential = await signInWithEmailAndPassword(
-            auth,
-            formData.email,
-            formData.password
-        );
+    setLoading(true);
 
-        const user = userCredential.user;
-        console.log("user logged in:", user);
-        alert(`welcome back, ${user.email}!`);
+    try {
+      // Supabase login
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (error) throw error;
+
+      console.log("User logged in:", data.user);
+      alert(`Welcome back, ${data.user?.email || "user"}!`);
+
+      // Redirect to homepage after login
+      router.push("/");
     } catch (error: unknown) {
-       // Narrow the unknown error to extract a message safely
-       const message = error instanceof Error ? error.message : String(error);
-       console.error("Login error:", error);
-       alert(`Login failed: ${message}`);
+      if (error instanceof Error) {
+        console.error("Login error:", error.message);
+        alert(`Login failed: ${error.message}`);
+      } else {
+        console.error("Login error:", error);
+        alert("Login failed: An unknown error occurred.");
+      }
+    } finally {
+      setLoading(false);
     }
-        }
+  };
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-50">
@@ -70,9 +85,12 @@ export default function LoginForm() {
 
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition"
+            disabled={loading}
+            className={`w-full py-2 rounded-lg font-semibold text-white transition ${
+              loading ? "bg-blue-400" : "bg-blue-600 hover:bg-blue-700"
+            }`}
           >
-            Login
+            {loading ? "Logging in..." : "Login"}
           </button>
         </form>
 

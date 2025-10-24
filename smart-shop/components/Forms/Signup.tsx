@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabaseClient";
 
 export default function SignupForm() {
+  const router = useRouter();
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -20,30 +22,33 @@ export default function SignupForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-      try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        formData.email,
-        formData.password
-      );
 
-      await updateProfile(userCredential.user, {
-        displayName: formData.name,
-    
-  });
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          data: {
+            full_name: formData.name,
+          },
+        },
+      });
 
-    alert(`Welcome, ${formData.name}! Your account has been created.`);
-      console.log("User created:", userCredential.user);
+      if (error) throw error;
 
-      // Optionally, redirect user (if using next/navigation)
-      // router.push("/login");
+      alert(`Welcome, ${formData.name}! Please check your email to verify your account.`);
+
+      console.log("User created:", data.user);
+
+      // Redirect to login page after successful signup
+      router.push("/login");
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.error("Signup error:", error.message);
         alert(error.message);
       } else {
         console.error("Signup error:", error);
-        alert("An unexpected error occurred.");
+        alert(String(error));
       }
     } finally {
       setLoading(false);
@@ -59,7 +64,9 @@ export default function SignupForm() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="name" className="block text-sm font-medium mb-1">Full Name</label>
+            <label htmlFor="name" className="block text-sm font-medium mb-1">
+              Full Name
+            </label>
             <input
               id="name"
               type="text"
@@ -71,8 +78,11 @@ export default function SignupForm() {
               className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 outline-none"
             />
           </div>
+
           <div>
-            <label htmlFor="email" className="block text-sm font-medium mb-1">Email</label>
+            <label htmlFor="email" className="block text-sm font-medium mb-1">
+              Email
+            </label>
             <input
               id="email"
               type="email"
@@ -84,8 +94,11 @@ export default function SignupForm() {
               className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 outline-none"
             />
           </div>
+
           <div>
-            <label htmlFor="password" className="block text-sm font-medium mb-1">Password</label>
+            <label htmlFor="password" className="block text-sm font-medium mb-1">
+              Password
+            </label>
             <input
               id="password"
               type="password"
@@ -100,9 +113,12 @@ export default function SignupForm() {
 
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition"
+            disabled={loading}
+            className={`w-full py-2 rounded-lg font-semibold text-white transition ${
+              loading ? "bg-blue-400" : "bg-blue-600 hover:bg-blue-700"
+            }`}
           >
-            Sign Up
+            {loading ? "Creating Account..." : "Sign Up"}
           </button>
         </form>
 
