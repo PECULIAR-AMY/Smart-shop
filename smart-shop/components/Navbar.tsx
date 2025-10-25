@@ -44,19 +44,8 @@ const Navbar = () => {
             </Button>
         </div>
         <div className="flex items-center space-x-4">
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="outline">BNPL</Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                    <DropdownMenuItem>Option 1</DropdownMenuItem>
-                    <DropdownMenuItem>Option 2</DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
-            <Button variant="ghost" size="icon">
-                <ShoppingCart className="h-5 w-5" />
-            </Button>
-            <DropdownMenu>
+
+              <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="icon">
                         <User className="h-5 w-5" />
@@ -71,6 +60,19 @@ const Navbar = () => {
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="outline">BNPL</Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                    <DropdownMenuItem>Option 1</DropdownMenuItem>
+                    <DropdownMenuItem>Option 2</DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+
+             <Button variant="ghost" size="icon">
+                <ShoppingCart className="h-5 w-5" />
+            </Button>
         </div>
     </nav>
   )
