@@ -18,30 +18,43 @@ interface FilterOptions {
 }
 
 export async function fetchProducts(filters: FilterOptions): Promise<Product[]> {
-  let query = supabase.from("products").select("*");
+  let query = supabase.from('products').select('*');
 
-  if (filters.q) query = query.ilike("name", `%${filters.q}%`);
-  if (filters.category) query = query.eq("category", filters.category);
-  if (filters.gender) query = query.eq("gender", filters.gender);
+  // Apply filters
+  if (filters.q) {
+    query = query.ilike('name', `%${filters.q}%`);
+  }
+  if (filters.category) {
+    query = query.eq('category', filters.category);
+  }
+  if (filters.gender) {
+    query = query.eq('gender', filters.gender);
+  }
 
+  // Apply sorting
   switch (filters.sort) {
     case "price_asc":
-      query = query.order("price", { ascending: true });
+      query = query.order('price', { ascending: true });
       break;
     case "price_desc":
-      query = query.order("price", { ascending: false });
+      query = query.order('price', { ascending: false });
       break;
     case "rating":
-      query = query.order("rating", { ascending: false });
+      query = query.order('rating', { ascending: false });
+      break;
+    case "created_at":
+      query = query.order('created_at', { ascending: false });
       break;
     default:
-      query = query.order("created_at", { ascending: false });
+      query = query.order('rating', { ascending: false });
+      break;
   }
 
   const { data, error } = await query;
+
   if (error) {
-    console.error("Error fetching products:", error.message);
-    return [];
+    console.error('Error fetching products:', error);
+    throw error;
   }
 
   return data as Product[];

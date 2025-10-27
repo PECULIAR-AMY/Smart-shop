@@ -1,9 +1,10 @@
-import HeroSection from "@/components/Hero";
+
+import ProductsPage from "./product/page";
 
 export default function Home() {
   return (
     <div className="">
-      <HeroSection />
+      <ProductsPage />
     </div>
   );
 }

@@ -1,5 +1,8 @@
 
+"use client";
 import Link from 'next/link';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import {
@@ -9,8 +12,20 @@ import {
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
 import { User, Menu, Search, ShoppingCart } from 'lucide-react';
+import { useCartStore } from '@/lib/store';
 
 const Navbar = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const router = useRouter();
+  const { items } = useCartStore();
+  const cartItemCount = items.reduce((total, item) => total + item.quantity, 0);
+
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      router.push(`/product?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+
   return (
     <nav className="flex justify-between items-center p-4">
         <div className="flex items-center space-x-4">
@@ -22,13 +37,25 @@ const Navbar = () => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start">
                     <DropdownMenuItem asChild>
-                        <Link href="/electronics">Electronics</Link>
+                        <Link href="/product?q=Electronics">Electronics</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                        <Link href="/fashion">High Fashion</Link>
+                        <Link href="/product?q=High-End Fashion">High-End Fashion</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                        <Link href="/premiumproduct">Gadget</Link>
+                        <Link href="/product?q=Smart Home Devices">Smart Home Devices</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                        <Link href="/product?q=Gaming & Entertainment">Gaming & Entertainment</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                        <Link href="/product?q=Home & Living">Home & Living</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                        <Link href="/product?q=Luxury Accessories">Luxury Accessories</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                        <Link href="/product?q=Beauty & Personal Care">Beauty & Personal Care</Link>
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
@@ -38,8 +65,18 @@ const Navbar = () => {
             </Link>
         </div>
         <div className="flex-1 flex justify-center items-center space-x-2">
-            <Input type="text" placeholder="Search products, brands and categories" className="w-150" />
-            <Button className="bg-blue-500 text-white hover:bg-blue-600">
+            <Input
+              type="text"
+              placeholder="Search products, brands and categories"
+              className="w-150"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+            />
+            <Button
+              className="bg-blue-500 text-white hover:bg-blue-600"
+              onClick={handleSearch}
+            >
                 <Search className="h-4 w-4" />
             </Button>
         </div>
@@ -70,8 +107,15 @@ const Navbar = () => {
                 </DropdownMenuContent>
             </DropdownMenu>
 
-             <Button variant="ghost" size="icon">
-                <ShoppingCart className="h-5 w-5" />
+             <Button variant="ghost" size="icon" className="relative" asChild>
+                <Link href="/cart">
+                  <ShoppingCart className="h-5 w-5" />
+                  {cartItemCount > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                      {cartItemCount}
+                    </span>
+                  )}
+                </Link>
             </Button>
         </div>
     </nav>
