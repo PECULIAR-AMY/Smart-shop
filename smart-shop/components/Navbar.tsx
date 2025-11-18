@@ -102,7 +102,9 @@ const Navbar = () => {
                     <Button variant="outline">BNPL</Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                    <DropdownMenuItem>Option 1</DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                        <Link href="/bnlp">option 1</Link>
+                   </DropdownMenuItem>
                     <DropdownMenuItem>Option 2</DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>

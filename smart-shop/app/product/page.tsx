@@ -1,18 +1,24 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { fetchProducts, type Product } from "@/lib/api";
 import { useCartStore } from "@/lib/store";
 import ProductList from "./ProductList"
 
 export default function ProductsPage() {
+  const searchParams = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [filters, setFilters] = useState({
-    q: "",
+    q: searchParams?.get("q") ?? "",
     category: "",
     gender: "",
     sort: "rating",
   });
   const addToCart = useCartStore((state) => state.addToCart);
+
+  useEffect(() => {
+    setFilters(prev => ({ ...prev, q: searchParams?.get("q") ?? "" }));
+  }, [searchParams]);
 
   useEffect(() => {
     fetchProducts(filters)
