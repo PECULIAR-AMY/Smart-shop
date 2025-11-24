@@ -3,21 +3,26 @@ import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { fetchProducts, type Product } from "@/lib/api";
 import { useCartStore } from "@/lib/store";
-import ProductList from "./ProductList"
+import ProductList from "./ProductList";
 
 export default function ProductsPage() {
   const searchParams = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [filters, setFilters] = useState({
     q: searchParams?.get("q") ?? "",
-    category: "",
+    category: searchParams?.get("category") ?? "",
     gender: "",
     sort: "rating",
   });
   const addToCart = useCartStore((state) => state.addToCart);
 
   useEffect(() => {
-    setFilters(prev => ({ ...prev, q: searchParams?.get("q") ?? "" }));
+    setFilters({
+      q: searchParams?.get("q") ?? "",
+      category: searchParams?.get("category") ?? "",
+      gender: "",
+      sort: "rating",
+    });
   }, [searchParams]);
 
   useEffect(() => {
@@ -29,9 +34,6 @@ export default function ProductsPage() {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Products</h1>
-
-
-
       <ProductList products={products} onAddToCart={addToCart} />
     </div>
   );
