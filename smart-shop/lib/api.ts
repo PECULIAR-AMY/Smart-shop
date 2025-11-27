@@ -7,6 +7,7 @@ export type Product = {
   created_at?: string;
   category?: string;
   gender?: string;
+  bnpl_available?: boolean;
   [key: string]: unknown;
 };
 

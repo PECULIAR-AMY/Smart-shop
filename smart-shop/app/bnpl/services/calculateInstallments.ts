@@ -1,15 +1,14 @@
-export function calculateBnlp(total: number) {
+export function calculateBnlp(total: number, months = 3) {
     const upfront = total * 0.25;
     const balance = total - upfront;
-    const installment = balance / 3;
+    const installment = balance / months;
 
-    return {
-        upfront,
-        installment,
-        schedule: [
-            {installment: 1, amount:installment, daysFromNow: 10 },
-            {installment: 2, amount:installment, daysFromNow: 20 },
-            {installment: 3, amount:installment, daysFromNow: 30 }
-        ]
-    };
+    const schedule = Array.from({ length: months }, (_, i) => {
+       const dueDate = new Date();
+       dueDate.setDate(dueDate.getDate() + (i + 1) * 30);
+       return { installmentNumber: i + 1, amount: parseFloat(installment.toFixed(2)), dueDate };
+    });
+
+    return { upfront: parseFloat(upfront.toFixed(2)), installment: parseFloat(installment.toFixed(2)), schedule };
+
 }

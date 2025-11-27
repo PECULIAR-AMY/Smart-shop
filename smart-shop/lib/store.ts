@@ -13,6 +13,9 @@ interface CartStore {
   updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
   getTotal: () => number;
+  getBnplTotal: () => number;
+  getNonBnplTotal: () => number;
+  getAmountToPayNow: () => number;
 }
 
 export const useCartStore = create<CartStore>()(
@@ -55,6 +58,22 @@ export const useCartStore = create<CartStore>()(
           (total, item) => total + item.price * item.quantity,
           0
         );
+      },
+      getBnplTotal: () => {
+        return get().items
+          .filter(item => item.bnpl_available)
+          .reduce((total, item) => total + item.price * item.quantity, 0);
+      },
+      getNonBnplTotal: () => {
+        return get().items
+          .filter(item => !item.bnpl_available)
+          .reduce((total, item) => total + item.price * item.quantity, 0);
+      },
+      getAmountToPayNow: () => {
+        const bnplTotal = get().getBnplTotal();
+        const nonBnplTotal = get().getNonBnplTotal();
+        const bnplDeposit = bnplTotal * 0.4;
+        return nonBnplTotal + bnplDeposit;
       },
     }),
     {

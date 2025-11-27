@@ -94,17 +94,9 @@ const Navbar = () => {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline">BNPL</Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem asChild>
-              <Link href="/bnlp">option 1</Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem>Option 2</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <Link href="/bnplpolicies">
+          <Button variant="outline">BNPL</Button>
+        </Link>
         <Button variant="ghost" size="icon" className="relative" asChild>
           <Link href="/cart">
             <ShoppingCart className="h-5 w-5" />

@@ -43,13 +43,16 @@ declare global {
 }
 
 const CheckoutPage = () => {
-  const { items, getTotal, clearCart } = useCartStore();
+  const { items, getTotal, getBnplTotal, getNonBnplTotal, getAmountToPayNow, clearCart } = useCartStore();
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const router = useRouter();
 
   const total = getTotal();
+  const bnplTotal = getBnplTotal();
+  const nonBnplTotal = getNonBnplTotal();
+  const amountToPayNow = getAmountToPayNow();
 
   useEffect(() => {
     // Load Paystack script
@@ -72,7 +75,7 @@ const CheckoutPage = () => {
     const paystack = window.PaystackPop.setup({
       key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || 'pk_test_your_paystack_public_key', // Replace with your actual public key
       email,
-      amount: total * 100, // Paystack expects amount in kobo (multiply by 100)
+      amount: amountToPayNow * 100, // Paystack expects amount in kobo (multiply by 100)
       currency: 'NGN',
       ref: 'ref_' + Math.floor(Math.random() * 1000000000 + 1),
       metadata: {

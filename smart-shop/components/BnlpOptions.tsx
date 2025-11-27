@@ -1,30 +1,28 @@
-"use client"
+"use client";
+import { useState } from "react";
+import { calculateInstallments } from "../app/bnpl/services/calculateInstallments";
 
-import {useState} from "react";
+export default function BnplOption({ total }: { total: number }) {
+  const [showBreakdown, setShowBreakdown] = useState(false);
+  const { upfront, schedule } = calculateInstallments(total);
 
-function calculateBnlp(total: number) {
-    // Example calculation: 20% upfront, remaining split into 3 equal installments
-    const upfront = total * 0.2;
-    const installment = (total - upfront) / 3;
-    return { upfront, installment };
-}
-
-export default function BnplOption({total}: {total: number}) {
-    const [open, setOpen] = useState(false);
-    const { upfront, installment } = calculateBnlp(total);
-
-    return (
-        <div>
-            <button onClick={() => setOpen(!open)} >
-                Bnpl-pay ₦{upfront.toFixed(2)} now
-            </button>
-
-            {open && (
-                <div className="mt-3 p-3 border rounded">
-                   <p>upfront payment: ₦{upfront.toFixed(2)}</p>
-                   <p>3 installments: ₦{installment.toFixed(2)} every 10 Days</p>
-                </div>
-            )}
-        </div>
-    )
+  return (
+    <div className="border p-3 rounded my-4">
+      <button
+        className="bg-blue-600 text-white px-4 py-2 rounded"
+        onClick={() => setShowBreakdown(!showBreakdown)}
+      >
+        Buy Now Pay Later (₦{upfront})
+      </button>
+      {showBreakdown && (
+        <ul className="mt-3 space-y-1">
+          {schedule.map((s) => (
+            <li key={s.installmentNumber}>
+              Installment {s.installmentNumber}: ₦{s.amount} — Due {s.dueDate.toDateString()}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
 }
